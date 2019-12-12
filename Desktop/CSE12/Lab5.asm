@@ -49,8 +49,7 @@ j  exit_program                # prevents this file from running
 
 #------------------------------------------------------------------------
 # add additional macros here
-
-
+#
 #------------------------------------------------------------------------
 # main_function_lab5_19q4_fa_ce12:
 #
@@ -206,6 +205,41 @@ print_str_array: nop
 .text
 str_to_int_array: nop
     
+    subi $sp, $sp, 24       #sub from the stack pointer
+    sw $ra, 12($sp)         #to keep the return address
+    sw $s0, 8($sp)          #putting save registers into the array
+    sw $s1, 4($sp)
+    sw $s2, 0($sp)
+    sw $s3, 16($sp)
+    sw $s4, 20($sp)
+    
+    move $s0, $a0           #keeping track of the length
+    move $s1, $a1           #getting the pointer to the string
+    move $s2, $a2           #getting the pointer to the int array
+    
+    li $s3, 0               #setting the counter to 0
+    
+    loop_for_str_to_int: nop
+    
+    mul $s4, $s3, 4
+    add $t0, $s1, $s4
+    lw $a0, ($t0)           
+    
+    jal str_to_int
+    
+    add $t0, $s2, $s4
+    sw $v0, ($t1)
+    addi $s3, $s3, 1
+    blt $s3, $s0, loop_for_str_to_int
+    
+    lw $s4, 20($sp)         #offset
+    lw $s3, 16($sp)         #counter
+    lw $ra, 12($sp)         #getting return address
+    lw $s0, 8($sp)          #putting the save registers from the array
+    lw $s1, 4($sp)
+    lw $s2, 0($sp)
+    addi $sp, $sp, 24       #add back to the counter
+
     jr   $ra
 
 #-----------------------------------------------------------------------
@@ -224,114 +258,89 @@ str_to_int_array: nop
 # REGISTER USE
 # 
 #-----------------------------------------------------------------------
-
+.data
+numbers: .word 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 0, 0, 0, 0, 0, 0, 10, 11, 12, 13, 14, 15, 
+               0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+               10, 11, 12, 13, 14, 15
+               
 .text
 str_to_int: nop
+    li $v0, 0               #adder
+    la $t0, numbers         #created the numbers table so that it'll be easeir to find the numbers
     
+    lb $t1, 2($a0)          #first byte
+    sll $v0, $v0, 4         
+    addi $t2, $t1, -48      #subtracting 48 from the byte to get rid of the offset
+    sll $t2, $t2, 2         
+    addu $t2, $t2, $t0      #getting the address
+    lw $t3, 0($t2)          #int value
+    addu $v0, $v0, $t3      #adding to the adder
     
-    li $t6, 0
-    li $t5, 0
+    lb $t1, 3($a0)          
+    sll $v0, $v0, 4         
+    addi $t2, $t1, -48      
+    sll $t2, $t2, 2         
+    addu $t2, $t2, $t0      
+    lw $t3, 0($t2)          
+    addu $v0, $v0, $t3      
     
-    lb $t1, 2($a0)
-    li $t7, 2
-    bge $t1, '8', letter
-    b number
-    back2:
-    li $t6, 4294967296
-    mult $t1, $t6
+    lb $t1, 4($a0)          
+    sll $v0, $v0, 4         
+    addi $t2, $t1, -48      
+    sll $t2, $t2, 2         
+    addu $t2, $t2, $t0      
+    lw $t3, 0($t2)          
+    addu $v0, $v0, $t3
     
-    lb $t1, 3($a0)
-    li $t7, 3
-    bge $t1, '8', letter
-    b number
-    back3:
-    li $t6, 268435456
-    mult $t1, $t6
-    add $t5, $t6, $t5
+    lb $t1, 5($a0)          
+    sll $v0, $v0, 4         
+    addi $t2, $t1, -48      
+    sll $t2, $t2, 2         
+    addu $t2, $t2, $t0      
+    lw $t3, 0($t2)          
+    addu $v0, $v0, $t3  
     
-    lb $t1, 4($a0)
-    li $t7, 4
-    bge $t1, '8', letter
-    b number
-    back4:
-    li $t6, 16777216
-    mult $t1, $t6
-    add $t5, $t6, $t5
+    lb $t1, 6($a0)          
+    sll $v0, $v0, 4         
+    addi $t2, $t1, -48      
+    sll $t2, $t2, 2         
+    addu $t2, $t2, $t0      
+    lw $t3, 0($t2)          
+    addu $v0, $v0, $t3  
     
-    lb $t1, 5($a0)
-    li $t7, 5
-    bge $t1, '8', letter
-    b number
-    back5:
-    li $t6, 1048576
-    mult $t1, $t6
-    add $t5, $t6, $t5
+    lb $t1, 7($a0)          
+    sll $v0, $v0, 4         
+    addi $t2, $t1, -48      
+    sll $t2, $t2, 2         
+    addu $t2, $t2, $t0      
+    lw $t3, 0($t2)          
+    addu $v0, $v0, $t3  
     
-    lb $t1, 6($a0)
-    li $t7, 6
-    bge $t1, '8', letter
-    b number
-    back6:
-    li $t6, 65536
-    mult $t1, $t6
-    add $t5, $t6, $t5
+    lb $t1, 8($a0)          
+    sll $v0, $v0, 4         
+    addi $t2, $t1, -48      
+    sll $t2, $t2, 2         
+    addu $t2, $t2, $t0      
+    lw $t3, 0($t2)          
+    addu $v0, $v0, $t3
     
-    lb $t1, 7($a0)
-    li $t7, 7
-    bge $t1, '8', letter
-    b number
-    back7:
-    li $t6, 4096
-    mult $t1, $t6
-    add $t5, $t6, $t5
+    lb $t1, 9($a0)          
+    sll $v0, $v0, 4         
+    addi $t2, $t1, -48      
+    sll $t2, $t2, 2         
+    addu $t2, $t2, $t0      
+    lw $t3, 0($t2)          
+    addu $v0, $v0, $t3
     
-    lb $t1, 8($a0)
-    li $t7, 8
-    bge $t1, '8', letter
-    b number
-    back8:
-    li $t6, 256
-    mult $t1, $t6
-    add $t5, $t6, $t5
+    lb $t1, 10($a0)          
+    sll $v0, $v0, 4         
+    addi $t2, $t1, -48      
+    sll $t2, $t2, 2         
+    addu $t2, $t2, $t0      
+    lw $t3, 0($t2)          
+    addu $v0, $v0, $t3
     
-    lb $t1, 9($a0)
-    li $t7, 9
-    bge $t1, '8', letter
-    b number
-    back9:
-    li $t6, 16
-    mult $t1, $t6
-    add $t5, $t6, $t5
-    
-    lb $t1, 10($a0)
-    li $t7, 10
-    bge $t1, '8', letter
-    b number
-    back10:
-    add $t5, $t6, $t5   
-    
-    
-          
-    jr   $ra
-    
-    letter: addi $v0, $t1, -55
-    b back
-    
-    
-    number: addi $v0, $t1, -48
-    b back
-    
-    
-    back:
-         beq $t7, 2, back2
-         beq $t7, 3, back3
-         beq $t7, 4, back4
-         beq $t7, 5, back5
-         beq $t7, 6, back6
-         beq $t7, 7, back7
-         beq $t7, 8, back8
-         beq $t7, 9, back9
-         beq $t7, 10, back10
+    jr $ra
     
 #-----------------------------------------------------------------------
 # sort_array
@@ -372,7 +381,7 @@ sort_array: nop
 
 .text
 print_decimal_array: nop
-
+    
     jr   $ra
     
 #-----------------------------------------------------------------------
@@ -390,6 +399,7 @@ print_decimal_array: nop
 
 .text
 print_decimal: nop
+
 
     jr   $ra
 
